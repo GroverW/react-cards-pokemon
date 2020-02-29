@@ -12,21 +12,39 @@ const useFlip = (initialValue) => {
   return [isFacingUp, flip];
 }
 
+const useLocalStorage = (key) => {
 
+  const [data, setData] = useState(JSON.parse(localStorage.getItem(key)) || [])
 
-const useAxios = (url) => {
-  const [cards, setCards] = useState([]);
-
-  const getCard = async (name = "") => {
-    console.log("NAAAAME",name);
-    const response = await axios.get(`${url}/${name}`);
-    setCards(cards => [...cards, { ...response.data, id: uuid() }]);
+  // save to local storage
+  const setLocalStorage = (value) => {
+    localStorage.setItem(key, JSON.stringify(value));
+    setData(value)
   }
 
-  return [cards, getCard];
+  //clearing
+  const clearLocalStorage = () => {
+    localStorage.clear(key);
+    setData([]);
+  }
+
+  return [data, setLocalStorage, clearLocalStorage];
 }
 
-export { 
+const useAxios = (url) => {
+  const [cards, setLocalStorage, clearLocalStorage] = useLocalStorage(url);
+
+  const getCard = async (name = "") => {
+    const response = await axios.get(`${url}/${name}`);
+    setLocalStorage([...cards, { ...response.data, id: uuid() }]);
+  }
+
+  return [cards, getCard, clearLocalStorage];
+}
+
+
+
+export {
   useFlip,
-  useAxios 
+  useAxios
 };
