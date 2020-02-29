@@ -24,7 +24,7 @@ const useLocalStorage = (key) => {
 
   //clearing
   const clearLocalStorage = () => {
-    localStorage.clear(key);
+    localStorage.removeItem(key);
     setData([]);
   }
 
